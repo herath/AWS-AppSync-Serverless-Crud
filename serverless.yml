@@ -1,0 +1,93 @@
+service: cat-api
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: nodejs16.x
+
+plugins:
+  # Learn more https://github.com/sid88in/serverless-appsync-plugin
+  # This plugin is AWS recommended https://aws.amazon.com/graphql/serverless-graphql-server/
+  - serverless-appsync-plugin 
+
+appSync:
+  name: my-cat-api
+  schema: schema.api.graphql
+  authentication:
+    type: API_KEY
+  
+  # Pipeline JS Resolvers are defined here.
+  # Learn more about Pipeline JS Resolvers https://docs.aws.amazon.com/appsync/latest/devguide/pipeline-resolvers-js.html
+  # Learn how to define resolvers using serverless-appsync-plugin and pipeline functions https://github.com/sid88in/serverless-appsync-plugin/blob/2ef9b20c673b88f7d7aa2ccc0d4c9a7dec779097/doc/pipeline-functions.md 
+  pipelineFunctions:
+    getCatFunction:
+      dataSource: catDbTable
+      code: functions/getCat.js
+    getAllCatsFunction:
+      dataSource: catDbTable
+      code: functions/getAllCats.js
+    addCatFunction:
+      dataSource: catDbTable
+      code: functions/addCat.js
+    updateCatFunction:
+      dataSource: catDbTable
+      code: functions/updateCat.js
+    deleteCatFunction:
+      dataSource: catDbTable
+      code: functions/deleteCat.js
+
+  # Learn more https://github.com/sid88in/serverless-appsync-plugin/blob/2ef9b20c673b88f7d7aa2ccc0d4c9a7dec779097/doc/resolvers.md
+  resolvers:
+    getCat:
+        type: Query
+        field: getCat
+        dataSource: catDbTable
+        functions:
+          - getCatFunction
+    getAllCats:
+        type: Query
+        field: getAllCats
+        dataSource: catDbTable
+        functions:
+          - getAllCatsFunction
+    addCat:
+        type: Mutation
+        field: addCat
+        dataSource: catDbTable
+        functions:
+          - addCatFunction
+    updateCat:
+        type: Mutation
+        field: updateCat
+        dataSource: catDbTable
+        functions:
+          - updateCatFunction
+    deleteCat:
+        type: Mutation
+        field: deleteCat
+        dataSource: catDbTable
+        functions:
+          - deleteCatFunction
+
+  # Learn more https://github.com/sid88in/serverless-appsync-plugin/blob/2ef9b20c673b88f7d7aa2ccc0d4c9a7dec779097/doc/dataSources.md
+  dataSources:
+    catDbTable:
+      type: AMAZON_DYNAMODB
+      config:
+        tableName: CatApiTable
+
+resources:
+      Resources:
+        usersTable:
+          Type: AWS::DynamoDB::Table
+          Properties:
+            TableName: CatApiTable
+            AttributeDefinitions:
+              - AttributeName: id
+                AttributeType: S
+            KeySchema:
+              - AttributeName: id
+                KeyType: HASH
+            ProvisionedThroughput:
+              ReadCapacityUnits: 1
+              WriteCapacityUnits: 1

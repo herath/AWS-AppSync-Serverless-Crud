@@ -1,0 +1,43 @@
+type Cat {
+	id: ID!
+	name: String
+	race: String
+	age: Int!
+	sex: String
+	ownerName: String
+}
+
+type PaginatedCats {
+	cats: [Cat!]!
+	nextToken: String
+}
+
+type Mutation {
+	deleteCat(id: ID!): Cat
+	updateCat(
+		id: ID!,
+		name: String,
+		race: String,
+		age: Int!,
+		sex: String,
+		ownerName: String
+	): Cat
+	addCat(
+		id: ID!,
+		name: String!,
+		race: String!,
+		age: Int!,
+		sex: String!,
+		ownerName: String!
+	): Cat!
+}
+
+type Query {
+	getCat(id: ID): Cat
+	getAllCats(limit: Int, nextToken: String): PaginatedCats!
+}
+
+schema {
+	query: Query
+	mutation: Mutation
+}

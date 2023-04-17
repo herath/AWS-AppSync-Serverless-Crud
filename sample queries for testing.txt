@@ -1,0 +1,57 @@
+mutation addCat {
+  addCat(id: 1, name: "Garfield", race: "hungry", age: 3, sex: "Male", ownerName: "John") {
+    id
+    age
+    name
+    race
+    sex
+    ownerName
+  }
+}
+
+query getCat {
+  getCat(id: 1) {
+    id
+    name
+    age
+    ownerName
+    race
+    sex
+  }
+}
+
+query getAllCats {
+  getAllCats(limit: 5) {
+    cats {
+      id
+      name
+      age
+      ownerName
+      race
+      sex
+    }
+    nextToken
+  }
+}
+
+mutation updateCat {
+  updateCat(id: 1, name: "Garfield updated", race: "hungry updated", age: 3, sex: "Male updated", ownerName: "John updated") {
+    id
+    age
+    name
+    race
+    sex
+    ownerName
+  }
+}
+
+mutation deleteCat {
+  deleteCat(id: 1) {
+    id
+    name
+    age
+    ownerName
+    race
+    sex
+  }
+}
